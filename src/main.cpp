@@ -9,6 +9,17 @@ using std::vector;
 
 typedef struct
 {
+    std::string name;
+    Rectangle bounds;
+    Texture2D texture;
+    Sound sound;
+    Texture2D animationTexture;
+    Image image;
+    int animationFrames;
+} Kana;
+
+typedef struct
+{
     string name;
     Rectangle bounds;
 } TextureInfo;
@@ -20,10 +31,92 @@ void update(float deltaTime)
 {
 }
 
+vector<Kana> loadAssets()
+{
+    vector<Kana> kanas;
+    kanas.reserve(142);
+
+    string audioPath = "assets/sounds/";
+    string hiraganaImgsPath = "assets/img/hiraganas/";
+    string audioExtension = ".mp3";
+    string imageExtension = ".png";
+    string hiraganaGifPath = "assets/gifs/hiraganas/";
+    string gifExtension = ".gif";
+
+    string kanaNames[] = {
+        "a", "e", "i", "o", "u",
+        "ka", "ga", "ki", "gi", "ku",
+        "gu", "ke", "ge", "ko", "go",
+        "sa", "za", "shi", "ji", "su",
+        "zu", "se", "ze", "so", "zo",
+        "ta", "da", "chi", "di", "tsu",
+        "du", "te", "de", "to", "do",
+        "na", "ni", "nu", "ne", "no",
+        "ha", "ba", "pa", "hi", "bi",
+        "pi", "fu", "bu", "pu", "he",
+        "be", "pe", "ho", "bo", "po",
+        "ma", "mi", "mu", "me", "mo",
+        "ya", "yu", "yo",
+        "ra", "ri", "ru", "re", "ro",
+        "wa", "wo", "n"};
+
+    for (string &kanaName : kanaNames)
+    {
+        string actualAudioPath = audioPath + kanaName + audioExtension;
+        Sound actualSound = LoadSound(actualAudioPath.c_str());
+        SetSoundVolume(actualSound, 0.8);
+
+        string actualImagePath = hiraganaImgsPath + kanaName + imageExtension;
+        Texture2D actualTexture = LoadTexture(actualImagePath.c_str());
+        Rectangle kanaBounds = {40, 40, (float)actualTexture.width, (float)actualTexture.height};
+
+        // string actualGifPath = hiraganaGifPath + kanaName + gifExtension;
+
+        // int animationFrames = 0;
+        // // Since I'm loading images, the ram consumption will go up.
+        // //  Load all GIF animation frames into a single Image
+        // //  NOTE: GIF data is always loaded as RGBA (32bit) by default
+        // //  NOTE: Frames are just appended one after another in image.data memory
+        // Image kanaAnimation = LoadImageAnim(actualGifPath.c_str(), &animationFrames);
+
+        // // Load texture from image
+        // // NOTE: We will update this texture when required with next frame data
+        // // WARNING: It's not recommended to use this technique for sprites animation,
+        // // use spritesheets instead, like illustrated in textures_sprite_anim example
+        // Texture2D drawKanaTexture = LoadTextureFromImage(kanaAnimation);
+
+        kanas.push_back({kanaName, kanaBounds, actualTexture, actualSound,/* drawKanaTexture, kanaAnimation, animationFrames*/});
+    }
+
+    // string katakanaImgsPath = "assets/img/katakanas/";
+    // string katakanaGifPath = "assets/gifs/katakanas/";
+
+    // int actualMaxSize = kanas.size();
+
+    // for (int i = 0; i < actualMaxSize; i++)
+    // {
+    //     auto actualKana = kanas[i];
+
+    //     string actualImagePath = katakanaImgsPath + actualKana.name + imageExtension;
+    //     Texture2D actualTexture = LoadTexture(actualImagePath.c_str());
+    //     Rectangle kanaBounds = {40, 40, (float)actualTexture.width, (float)actualTexture.height};
+
+    //     string actualGifPath = katakanaGifPath + actualKana.name + gifExtension;
+
+    //     int animationFrames = 0;
+    //     Image kanaAnimation = LoadImageAnim(actualGifPath.c_str(), &animationFrames);
+
+    //     Texture2D drawKanaTexture = LoadTextureFromImage(kanaAnimation);
+
+    //     kanas.push_back({actualKana.name, kanaBounds, actualTexture, actualKana.sound, drawKanaTexture, kanaAnimation, animationFrames});
+    // }
+
+    return kanas;
+}
+
 // Create custom split() function.
 vector<string> customSplit(string str, char separator)
 {
-
     vector<string> strings;
 
     int startIndex = 0, endIndex = 0;
@@ -78,6 +171,8 @@ int main()
     auto texture = LoadTexture("assets/img/hiraganas/hiraganas.png");
 
     vector<TextureInfo> data = loadSpriteSheet();
+
+    // vector<Kana> kanas = loadAssets();
 
     while (!WindowShouldClose())
     {
