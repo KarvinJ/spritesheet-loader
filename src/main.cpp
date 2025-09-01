@@ -85,7 +85,7 @@ vector<Kana> loadAssets()
         // // use spritesheets instead, like illustrated in textures_sprite_anim example
         // Texture2D drawKanaTexture = LoadTextureFromImage(kanaAnimation);
 
-        kanas.push_back({kanaName, kanaBounds, actualTexture, actualSound,/* drawKanaTexture, kanaAnimation, animationFrames*/});
+        kanas.push_back({kanaName, kanaBounds, actualTexture, actualSound, /* drawKanaTexture, kanaAnimation, animationFrames*/});
     }
 
     // string katakanaImgsPath = "assets/img/katakanas/";
@@ -168,11 +168,15 @@ int main()
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Starter");
     SetTargetFPS(60);
 
-    auto texture = LoadTexture("assets/img/hiraganas/hiraganas.png");
+    const clock_t begin_time = clock();
 
-    vector<TextureInfo> data = loadSpriteSheet();
+    // auto texture = LoadTexture("assets/img/hiraganas/hiraganas.png");
 
-    // vector<Kana> kanas = loadAssets();
+    // vector<TextureInfo> data = loadSpriteSheet();
+
+    vector<Kana> kanas = loadAssets();
+
+    std::cout << float(clock() - begin_time) / CLOCKS_PER_SEC;
 
     while (!WindowShouldClose())
     {
@@ -184,14 +188,14 @@ int main()
 
         ClearBackground(BLACK);
 
-        for (auto &i : data)
-        {
-            if (i.name.compare("ro") == 0)
-            {
-                DrawRectangleRec(i.bounds, WHITE);
-                DrawTextureRec(texture, i.bounds, {0, 0}, WHITE);
-            }
-        }
+        // for (auto &i : data)
+        // {
+        //     if (i.name.compare("ro") == 0)
+        //     {
+        //         DrawRectangleRec(i.bounds, WHITE);
+        //         DrawTextureRec(texture, i.bounds, {0, 0}, WHITE);
+        //     }
+        // }
 
         EndDrawing();
     }
