@@ -24,7 +24,7 @@ typedef struct
     Rectangle bounds;
 } TextureInfo;
 
-const int SCREEN_WIDTH = 960;
+const int SCREEN_WIDTH = 400;
 const int SCREEN_HEIGHT = 544;
 
 void update(float deltaTime)
@@ -62,9 +62,9 @@ vector<Kana> loadAssets()
 
     for (string &kanaName : kanaNames)
     {
-        string actualAudioPath = audioPath + kanaName + audioExtension;
-        Sound actualSound = LoadSound(actualAudioPath.c_str());
-        SetSoundVolume(actualSound, 0.8);
+        // string actualAudioPath = audioPath + kanaName + audioExtension;
+        // Sound actualSound = LoadSound(actualAudioPath.c_str());
+        // SetSoundVolume(actualSound, 0.8);
 
         string actualImagePath = hiraganaImgsPath + kanaName + imageExtension;
         Texture2D actualTexture = LoadTexture(actualImagePath.c_str());
@@ -85,31 +85,31 @@ vector<Kana> loadAssets()
         // // use spritesheets instead, like illustrated in textures_sprite_anim example
         // Texture2D drawKanaTexture = LoadTextureFromImage(kanaAnimation);
 
-        kanas.push_back({kanaName, kanaBounds, actualTexture, actualSound, /* drawKanaTexture, kanaAnimation, animationFrames*/});
+        kanas.push_back({kanaName, kanaBounds, actualTexture, /*actualSound, drawKanaTexture, kanaAnimation, animationFrames*/});
     }
 
-    // string katakanaImgsPath = "assets/img/katakanas/";
-    // string katakanaGifPath = "assets/gifs/katakanas/";
+    string katakanaImgsPath = "assets/img/katakanas/";
+    string katakanaGifPath = "assets/gifs/katakanas/";
 
-    // int actualMaxSize = kanas.size();
+    int actualMaxSize = kanas.size();
 
-    // for (int i = 0; i < actualMaxSize; i++)
-    // {
-    //     auto actualKana = kanas[i];
+    for (int i = 0; i < actualMaxSize; i++)
+    {
+        auto actualKana = kanas[i];
 
-    //     string actualImagePath = katakanaImgsPath + actualKana.name + imageExtension;
-    //     Texture2D actualTexture = LoadTexture(actualImagePath.c_str());
-    //     Rectangle kanaBounds = {40, 40, (float)actualTexture.width, (float)actualTexture.height};
+        string actualImagePath = katakanaImgsPath + actualKana.name + imageExtension;
+        Texture2D actualTexture = LoadTexture(actualImagePath.c_str());
+        Rectangle kanaBounds = {40, 40, (float)actualTexture.width, (float)actualTexture.height};
 
-    //     string actualGifPath = katakanaGifPath + actualKana.name + gifExtension;
+        // string actualGifPath = katakanaGifPath + actualKana.name + gifExtension;
 
-    //     int animationFrames = 0;
-    //     Image kanaAnimation = LoadImageAnim(actualGifPath.c_str(), &animationFrames);
+        // int animationFrames = 0;
+        // Image kanaAnimation = LoadImageAnim(actualGifPath.c_str(), &animationFrames);
 
-    //     Texture2D drawKanaTexture = LoadTextureFromImage(kanaAnimation);
+        // Texture2D drawKanaTexture = LoadTextureFromImage(kanaAnimation);
 
-    //     kanas.push_back({actualKana.name, kanaBounds, actualTexture, actualKana.sound, drawKanaTexture, kanaAnimation, animationFrames});
-    // }
+        kanas.push_back({actualKana.name, kanaBounds, actualTexture,/* actualKana.sound, drawKanaTexture, kanaAnimation, animationFrames*/});
+    }
 
     return kanas;
 }
@@ -170,11 +170,11 @@ int main()
 
     const clock_t begin_time = clock();
 
-    // auto texture = LoadTexture("assets/img/hiraganas/hiraganas.png");
+    Texture2D texture = LoadTexture("assets/img/hiraganas/hiraganas.png");
 
-    // vector<TextureInfo> data = loadSpriteSheet();
+    vector<TextureInfo> data = loadSpriteSheet();
 
-    vector<Kana> kanas = loadAssets();
+    // vector<Kana> kanas = loadAssets();
 
     std::cout << float(clock() - begin_time) / CLOCKS_PER_SEC;
 
@@ -188,14 +188,14 @@ int main()
 
         ClearBackground(BLACK);
 
-        // for (auto &i : data)
-        // {
-        //     if (i.name.compare("ro") == 0)
-        //     {
-        //         DrawRectangleRec(i.bounds, WHITE);
-        //         DrawTextureRec(texture, i.bounds, {0, 0}, WHITE);
-        //     }
-        // }
+        for (auto &i : data)
+        {
+            if (i.name.compare("ro") == 0)
+            {
+                DrawRectangleRec(i.bounds, WHITE);
+                DrawTextureRec(texture, i.bounds, {0, 0}, WHITE);
+            }
+        }
 
         EndDrawing();
     }
