@@ -60,9 +60,9 @@ vector<Kana> loadAssets()
 
     for (string &kanaName : kanaNames)
     {
-        // string actualAudioPath = audioPath + kanaName + audioExtension;
-        // Sound actualSound = LoadSound(actualAudioPath.c_str());
-        // SetSoundVolume(actualSound, 0.8);
+        string actualAudioPath = audioPath + kanaName + audioExtension;
+        Sound actualSound = LoadSound(actualAudioPath.c_str());
+        SetSoundVolume(actualSound, 0.8);
 
         string actualImagePath = hiraganaImgsPath + kanaName + imageExtension;
         Texture2D actualTexture = LoadTexture(actualImagePath.c_str());
@@ -83,7 +83,7 @@ vector<Kana> loadAssets()
         // // use spritesheets instead, like illustrated in textures_sprite_anim example
         // Texture2D drawKanaTexture = LoadTextureFromImage(kanaAnimation);
 
-        kanas.push_back({kanaName, kanaBounds, actualTexture, /*actualSound, drawKanaTexture, kanaAnimation, animationFrames*/});
+        kanas.push_back({kanaName, kanaBounds, actualTexture, actualSound, /*drawKanaTexture, kanaAnimation, animationFrames*/});
     }
 
     string katakanaImgsPath = "assets/img/katakanas/";
@@ -106,7 +106,7 @@ vector<Kana> loadAssets()
 
         // Texture2D drawKanaTexture = LoadTextureFromImage(kanaAnimation);
 
-        kanas.push_back({actualKana.name, kanaBounds, actualTexture, /* actualKana.sound, drawKanaTexture, kanaAnimation, animationFrames*/});
+        kanas.push_back({actualKana.name, kanaBounds, actualTexture,  actualKana.sound, /*drawKanaTexture, kanaAnimation, animationFrames*/});
     }
 
     return kanas;
@@ -185,7 +185,7 @@ vector<TextureInfo> loadKanas()
 
         string actualAudioPath = audioPath + name + audioExtension;
         Sound actualSound = LoadSound(actualAudioPath.c_str());
-        // SetSoundVolume(actualSound, 0.8);
+        SetSoundVolume(actualSound, 0.8);
 
         textureInfo.push_back({name, bounds, true, actualSound});
     }
@@ -225,6 +225,8 @@ int main()
 
     Texture2D hiraganaSpriteSheet = LoadTexture("assets/img/hiraganas/hiraganas.png");
     Texture2D katakanaSpriteSheet = LoadTexture("assets/img/katakanas/katakanas.png");
+
+    // vector<Kana> kanas = loadAssets();
 
     vector<TextureInfo> kanas = loadKanas();
 
