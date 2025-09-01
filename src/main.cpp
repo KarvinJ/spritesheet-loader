@@ -23,6 +23,7 @@ typedef struct
     string name;
     Rectangle bounds;
     bool isHiragana;
+    Sound sound;
 } TextureInfo;
 
 const int SCREEN_WIDTH = 400;
@@ -165,6 +166,9 @@ vector<TextureInfo> loadKanas()
     vector<TextureInfo> textureInfo;
     textureInfo.reserve(142);
 
+    string audioPath = "assets/sounds/";
+    string audioExtension = ".mp3";
+
     std::ifstream hiraganaTextureInfoFile("assets/img/hiraganas/hiraganas.txt");
 
     for (string line; getline(hiraganaTextureInfoFile, line);)
@@ -179,7 +183,11 @@ vector<TextureInfo> loadKanas()
 
         Rectangle bounds = {(float)x, (float)y, (float)width, (float)height};
 
-        textureInfo.push_back({name, bounds, true});
+        string actualAudioPath = audioPath + name + audioExtension;
+        Sound actualSound = LoadSound(actualAudioPath.c_str());
+        // SetSoundVolume(actualSound, 0.8);
+
+        textureInfo.push_back({name, bounds, true, actualSound});
     }
 
     hiraganaTextureInfoFile.close();
@@ -210,6 +218,8 @@ int main()
 {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Starter");
     SetTargetFPS(60);
+
+    InitAudioDevice();
 
     const clock_t begin_time = clock();
 
