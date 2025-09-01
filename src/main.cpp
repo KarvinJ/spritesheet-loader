@@ -22,14 +22,11 @@ typedef struct
 {
     string name;
     Rectangle bounds;
+    bool isHiragana;
 } TextureInfo;
 
 const int SCREEN_WIDTH = 400;
 const int SCREEN_HEIGHT = 544;
-
-void update(float deltaTime)
-{
-}
 
 vector<Kana> loadAssets()
 {
@@ -108,14 +105,14 @@ vector<Kana> loadAssets()
 
         // Texture2D drawKanaTexture = LoadTextureFromImage(kanaAnimation);
 
-        kanas.push_back({actualKana.name, kanaBounds, actualTexture,/* actualKana.sound, drawKanaTexture, kanaAnimation, animationFrames*/});
+        kanas.push_back({actualKana.name, kanaBounds, actualTexture, /* actualKana.sound, drawKanaTexture, kanaAnimation, animationFrames*/});
     }
 
     return kanas;
 }
 
 // Create custom split() function.
-vector<string> customSplit(string str, char separator)
+vector<string> customSplit(string &str, char separator)
 {
     vector<string> strings;
 
@@ -136,12 +133,12 @@ vector<string> customSplit(string str, char separator)
     return strings;
 }
 
-vector<TextureInfo> loadSpriteSheet()
+vector<TextureInfo> loadSpriteSheet(string path)
 {
     vector<TextureInfo> textureInfo;
-    // textureInfo.reserve(9);
+    textureInfo.reserve(71);
 
-    std::ifstream textureTextInfo("assets/img/hiraganas/hiraganas.txt");
+    std::ifstream textureTextInfo(path);
 
     for (string line; getline(textureTextInfo, line);)
     {
@@ -163,6 +160,52 @@ vector<TextureInfo> loadSpriteSheet()
     return textureInfo;
 }
 
+vector<TextureInfo> loadKanas()
+{
+    vector<TextureInfo> textureInfo;
+    textureInfo.reserve(142);
+
+    std::ifstream hiraganaTextureInfoFile("assets/img/hiraganas/hiraganas.txt");
+
+    for (string line; getline(hiraganaTextureInfoFile, line);)
+    {
+        auto list = customSplit(line, ',');
+
+        string name = list[0];
+        int x = stoi(list[1]);
+        int y = stoi(list[2]);
+        int width = stoi(list[3]);
+        int height = stoi(list[4]);
+
+        Rectangle bounds = {(float)x, (float)y, (float)width, (float)height};
+
+        textureInfo.push_back({name, bounds, true});
+    }
+
+    hiraganaTextureInfoFile.close();
+
+    std::ifstream katakanaTextureInfoFile("assets/img/katakanas/katakanas.txt");
+
+    for (string line; getline(katakanaTextureInfoFile, line);)
+    {
+        auto list = customSplit(line, ',');
+
+        string name = list[0];
+        int x = stoi(list[1]);
+        int y = stoi(list[2]);
+        int width = stoi(list[3]);
+        int height = stoi(list[4]);
+
+        Rectangle bounds = {(float)x, (float)y, (float)width, (float)height};
+
+        textureInfo.push_back({name, bounds, false});
+    }
+
+    katakanaTextureInfoFile.close();
+
+    return textureInfo;
+}
+
 int main()
 {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Starter");
@@ -170,30 +213,37 @@ int main()
 
     const clock_t begin_time = clock();
 
-    Texture2D texture = LoadTexture("assets/img/hiraganas/hiraganas.png");
+    Texture2D hiraganaSpriteSheet = LoadTexture("assets/img/hiraganas/hiraganas.png");
+    Texture2D katakanaSpriteSheet = LoadTexture("assets/img/katakanas/katakanas.png");
 
-    vector<TextureInfo> data = loadSpriteSheet();
-
-    // vector<Kana> kanas = loadAssets();
+    vector<TextureInfo> kanas = loadKanas();
 
     std::cout << float(clock() - begin_time) / CLOCKS_PER_SEC;
 
+    bool isHiraganaMode = true;
+
     while (!WindowShouldClose())
     {
-        float deltaTime = GetFrameTime();
-
-        update(deltaTime);
+        if (IsKeyPressed(KEY_SPACE))
+        {
+            isHiraganaMode = !isHiraganaMode;
+        }
 
         BeginDrawing();
 
         ClearBackground(BLACK);
 
-        for (auto &i : data)
+        DrawRectangle(40, 40, 320, 268, WHITE);
+
+        for (auto &kana : kanas)
         {
-            if (i.name.compare("ro") == 0)
+            if (isHiraganaMode && kana.isHiragana && kana.name.compare("sa") == 0)
             {
-                DrawRectangleRec(i.bounds, WHITE);
-                DrawTextureRec(texture, i.bounds, {0, 0}, WHITE);
+                DrawTextureRec(hiraganaSpriteSheet, kana.bounds, {40, 40}, WHITE);
+            }
+            else if (!isHiraganaMode && !kana.isHiragana && kana.name.compare("sa") == 0)
+            {
+                DrawTextureRec(katakanaSpriteSheet, kana.bounds, {40, 40}, WHITE);
             }
         }
 
